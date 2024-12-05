@@ -38,7 +38,7 @@
     "prepack": "nuxt-module-build build",
     "dev": "nuxi dev playground",
     "dev:build": "nuxi build playground",
-    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare",
+    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prepublishOnly": "pnpm prepack",
@@ -46,7 +46,7 @@
     "update-deps": "taze -w && pnpm i",
     "test": "vitest run",
     "test:watch": "vitest watch",
-    "prepare": "cd playground"
+    "prepare": "cd playground && npx prisma migrate dev --name init"
   },
   "dependencies": {
     "@nuxt/kit": "^3.11.2",
