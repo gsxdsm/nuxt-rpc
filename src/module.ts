@@ -16,7 +16,7 @@ export default defineNuxtModule<ModuleOptions>({
     version: '^3.3.0'
   },
   defaults: {
-    pattern: '**/rpc/*.{ts,js,mjs}'
+    pattern: '**/rpc/**/*.{ts,js,mjs}'
   },
   async setup (options, nuxt) {
     const files: string[] = []
