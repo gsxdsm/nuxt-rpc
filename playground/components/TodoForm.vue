@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from '#imports'
-import { addTodo } from '~/lib/todo.server'
+import { addTodo } from '~/server/rpc/todo'
 
 const title = ref('')
 const content = ref('')
