@@ -11,8 +11,8 @@ export interface ModuleOptions {
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
-    name: 'nuxt-remote-fn',
-    configKey: 'remoteFn',
+    name: 'nuxt-rpc',
+    configKey: 'rpc',
     version: '^3.3.0'
   },
   defaults: {
@@ -25,7 +25,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     // Transpile runtime and handler
     const resolver = createResolver(import.meta.url)
-    const handlerPath = resolver.resolve(nuxt.options.buildDir, 'remote-handler')
+    const handlerPath = resolver.resolve(nuxt.options.buildDir, 'rpc-handler')
     const runtimeDir = resolver.resolve('./runtime')
     nuxt.options.build.transpile.push(runtimeDir, handlerPath)
 
@@ -39,7 +39,7 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     addServerHandler({
-      route: '/api/__remote/:moduleId/:functionName',
+      route: '/api/__rpc/:moduleId/:functionName',
       method: 'post',
       handler: handlerPath
     })
@@ -57,7 +57,7 @@ export default defineNuxtModule<ModuleOptions>({
     await scanRemoteFunctions()
 
     addTemplate({
-      filename: 'remote-handler.ts',
+      filename: 'rpc-handler.ts',
       write: true,
       getContents () {
         const filesWithId = files.map(file => ({
@@ -65,14 +65,14 @@ export default defineNuxtModule<ModuleOptions>({
           id: getModuleId(file)
         }))
         return dedent`
-          import { createRemoteFnHandler } from ${JSON.stringify(resolver.resolve(runtimeDir, 'server'))}
+          import { createRpcHandler } from ${JSON.stringify(resolver.resolve(runtimeDir, 'server'))}
           ${filesWithId.map(i => `import * as ${i.id} from ${JSON.stringify(i.file)}`).join('\n')}
 
           export type RemoteFunction = {
             ${filesWithId.map(i => `${i.id}: typeof ${i.id}`).join('\n')}
           }
 
-          export default createRemoteFnHandler({
+          export default createRpcHandler({
             ${filesWithId.map(i => i.id).join(',\n')}
           })
         `
