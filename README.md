@@ -51,8 +51,8 @@ The `server/rpc` part of the path informs the module that this code should never
 
 Checkout [the playground example](/playground).
 
-## RPC Composable
-You can create a RPC composable/shortcut:
+## RPC Util
+You can create a RPC until/shortcut:
 
 ```typescript
 import type { RemoteFunction } from "#build/rpc-handler";
