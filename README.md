@@ -51,6 +51,16 @@ The `server/rpc` part of the path informs the module that this code should never
 
 Checkout [the playground example](/playground).
 
+## RPC Composable
+You can create a RPC composable/shortcut:
+
+```typescript
+import type { RemoteFunction } from "#build/rpc-handler";
+import { createClient } from "nuxt-rpc/client";
+
+export const rpc = createClient<RemoteFunction>();
+```
+
 ## H3 Event
 
 The `useH3Event` hook provides the `event` object of the current request. You can use it to check headers, log requests, or extend the event's request object.
