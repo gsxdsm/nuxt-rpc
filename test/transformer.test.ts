@@ -5,9 +5,9 @@ describe('transformer', () => {
 
   it('receives a valid variable name for the module id', async () => {
 
-    expect(getModuleId('todo.server.ts')).toBe('todo')
-    expect(getModuleId('todo.prisma.server.ts')).toBe('todo_prisma')
-    expect(getModuleId('todo-todo.server.ts')).toBe('todo_todo')
-    expect(getModuleId('1-todo.server.ts')).toBe('_1_todo')
+    expect(getModuleId('todo.ts')).toBe('todo')
+    expect(getModuleId('user/nuxt/server/rpc/todo.ts')).toBe('todo')
+    expect(getModuleId('user/nuxt/server/rpc/todo-todo.ts')).toBe('todo_todo')
+    expect(getModuleId('user/nuxt/server/rpc/1-todo.ts')).toBe('_1_todo')
   })
 })
