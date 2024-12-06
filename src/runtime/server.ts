@@ -12,7 +12,7 @@ export function useH3Event(): H3Event {
 
 type ModuleFunctionsMap = Record<string, Record<string, (...args: any[]) => any>>;
 
-export function createRemoteFnHandler<
+export function createRpcFnHandler<
   FunctionMap extends ModuleFunctionsMap,
   ModuleName extends keyof FunctionMap
 > (functions: FunctionMap): EventHandler<EventHandlerRequest, Promise<any>> {
@@ -30,14 +30,14 @@ export function createRemoteFnHandler<
     if (!(moduleId in functions)) {
       throw createError({
         statusCode: 400,
-        statusMessage: `[nuxt-remote-fn]: Module ${moduleId as string} does not exist. Are you sure the file exists?`
+        statusMessage: `[nuxt-rpc]: Module ${moduleId as string} does not exist. Are you sure the file exists?`
       })
     }
   
     if (typeof functions[moduleId][functionName] !== 'function') {
       throw createError({
         statusCode: 400,
-        statusMessage: `[nuxt-remote-fn]: ${functionName as string} is not a function.`
+        statusMessage: `[nuxt-rpc]: ${functionName as string} is not a function.`
       })
     }
 
