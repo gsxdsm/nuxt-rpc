@@ -1,5 +1,5 @@
-import { useH3Event } from '../../src/runtime/server'
-import { prisma } from './prisma'
+import { useH3Event } from "../../../src/runtime/server";
+import { prisma } from "~/lib/prisma";
 
 export async function getTodos () {
   const todos = await prisma.todo.findMany()
