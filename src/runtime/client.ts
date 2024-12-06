@@ -3,7 +3,7 @@ interface Options {
 }
 
 export function createClient<T>(options?: Options) {
-  function generateAPI(baseUrl = '/api/__remote'): T {
+  function generateAPI(baseUrl = '/api/__rpc'): T {
     const noop = () => {}
     noop.url = baseUrl
 
