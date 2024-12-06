@@ -61,6 +61,24 @@ import { createClient } from "nuxt-rpc/client";
 export const rpc = createClient<RemoteFunction>();
 ```
 
+You can then use this in your view:
+
+```vue
+index.vue
+
+<script setup lang="ts">
+const { post } = await rpc.posts.getPost(1);
+</script>
+
+<template>
+  <div>
+    <span>Post: </span>
+    <span>{{ post?.title }}</span>
+  </div>
+</template>
+
+```
+
 ## H3 Event
 
 The `useH3Event` hook provides the `event` object of the current request. You can use it to check headers, log requests, or extend the event's request object.
