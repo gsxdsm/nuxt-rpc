@@ -84,7 +84,7 @@ const { post } = await rpc.posts.getPost(1);
 The `useH3Event` hook provides the `event` object of the current request. You can use it to check headers, log requests, or extend the event's request object.
 
 ```ts
-import { useH3Event } from 'nuxt-remote-fn/server'
+import { useH3Event } from 'nuxt-rpc/server'
 import { getRequestHeader, createError } from 'h3'
 import { decodeAndVerifyJwtToken } from '~/somewhere/in/utils'
 
