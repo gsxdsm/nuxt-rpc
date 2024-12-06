@@ -1,27 +1,27 @@
-# nuxt-remote-fn
+# nuxt-rpc
 
-`nuxt-remote-fn` allows you to call your backend-functions from the frontend, as if they were local. No need for an extra language or DSL to learn and maintain.
+`nuxt-rpc` allows you to call your backend-functions from the frontend, as if they were local. No need for an extra language or DSL to learn and maintain. Based off of https://github.com/wobsoriano/nuxt-remote-fn
 
 ## Install
 
 ```bash
-npm install nuxt-remote-fn
+npm install nuxt-rpc
 ```
 
 ```ts
 export default defineNuxtConfig({
   modules: [
-    'nuxt-remote-fn',
+    'nuxt-rpc',
   ],
 })
 ```
 
 ## Usage
 
-Export your remote functions in `*.server.{ts,js,mjs}` files:
+Export your remote functions in `server/rpc/**/*.{ts,js,mjs}` files:
 
 ```ts
-// lib/todo.server.ts
+// server/rpc/todo.ts
 
 import { PrismaClient } from '@prisma/client'
 
@@ -37,7 +37,7 @@ Directly use any SQL/ORM query to retrieve & mutate data on client.
 
 ```vue
 <script setup lang="ts">
-import { getTodos } from '@/lib/todo.server'
+import { getTodos } from '@/server/rpc/todo'
 
 const todos = await getTodos()
 </script>
@@ -47,7 +47,7 @@ const todos = await getTodos()
 </template>
 ```
 
-The `.server` part of the filename informs the module that this code should never end up in the browser and to convert it to an API call instead (`POST /api/__remote/todo/getTodos`).
+The `server/rpc` part of the path informs the module that this code should never end up in the browser and to convert it to an API call instead (`POST /api/__remote/todo/getTodos`).
 
 Checkout [the playground example](/playground).
 
@@ -93,7 +93,7 @@ You can use all built-in [h3 utilities](https://github.com/unjs/h3#utilities) in
 
 ## createContext
 
-Each `.server.` file can also export a `createContext` function that is called for each incoming request:
+Each rpc file can also export a `createContext` function that is called for each incoming request:
 
 ```ts
 export function createContext() {
@@ -124,11 +124,11 @@ export async function addTodo(todo: Todo) {
 
 ## useAsyncData
 
-`nuxt-remote-fn` can work seamlessly with [`useAsyncData`](https://nuxt.com/docs/api/composables/use-async-data/):
+`nuxt-rpc` can work seamlessly with [`useAsyncData`](https://nuxt.com/docs/api/composables/use-async-data/):
 
 ```vue
 <script setup lang="ts">
-import { getTodos } from '@/lib/todo.server'
+import { getTodos } from '@/server/rpc/todo'
 
 const { data: todos } = useAsyncData('todos', () => getTodos())
 </script>
@@ -140,7 +140,7 @@ Since `nuxt.config.ts` file doesn't accept functions as values, you can use the 
 
 ```ts
 import type { RemoteFunction } from '#build/remote-handler'
-import { createClient } from 'nuxt-remote-fn/client'
+import { createClient } from 'nuxt-rpc/client'
 
 const client = createClient<RemoteFunction>({
   fetchOptions: {
@@ -157,7 +157,20 @@ const todo = await client.todo.getTodo(1)
 
 Sharing data from server to client involves a lot of ceremony. i.e. an `eventHandler` needs to be set up and `useFetch` needs to be used in the browser.
 
-Wouldn't it be nice if all of that was automatically handled and all you'd need to do is import `getTodos` on the client, just like you do in `eventHandler`'s? That's where `nuxt-remote-fn` comes in. With `nuxt-remote-fn`, all exported functions from `.server.` files automatically become available to the browser as well.
+Wouldn't it be nice if all of that was automatically handled and all you'd need to do is import `getTodos` on the client, just like you do in `eventHandler`'s? That's where `nuxt-rpc` comes in. With `nuxt-rpc`, all exported functions from `server/rpc.` files automatically become available to the browser as well.
+
+This module builds upon the great work of [nuxt-remote-fn](https://github.com/wobsoriano/nuxt-remote-fn) and adds support for Nuxt 4 as well as organizing remote functions under server/rpc instead of looking for .server. in the filename (which can cause issues with server plugins and components). In addition, files can be nested under subdirectories of server/rpc, which will be added to the function signature - this can be useful for adding middleware checks. Ex:
+
+```
+./server/rpc/public/todos
+
+export function getTodos(){
+  ...
+}
+
+```
+
+Would be addressable by public_todos.getTodos(). Middleware can check for the path prefix to perform auth and other functions.
 
 ## Development
 
@@ -167,7 +180,7 @@ Wouldn't it be nice if all of that was automatically handled and all you'd need 
 
 ## Credits
 
-This project is inspired by [tRPC](http://trpc.io/), [Telefunc](https://telefunc.com) and [nuxt-server-fn](https://github.com/antfu/nuxt-server-fn).
+This project is inspired by [tRPC](http://trpc.io/), [Telefunc](https://telefunc.com) and [nuxt-server-fn](https://github.com/antfu/nuxt-server-fn). It is directly forked from [nuxt-remote-fn](https://github.com/wobsoriano/nuxt-remote-fn)
 
 ## License
 
