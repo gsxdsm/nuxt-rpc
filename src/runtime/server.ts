@@ -12,7 +12,7 @@ export function useH3Event(): H3Event {
 
 type ModuleFunctionsMap = Record<string, Record<string, (...args: any[]) => any>>;
 
-export function createRpcFnHandler<
+export function createRpcHandler<
   FunctionMap extends ModuleFunctionsMap,
   ModuleName extends keyof FunctionMap
 > (functions: FunctionMap): EventHandler<EventHandlerRequest, Promise<any>> {
