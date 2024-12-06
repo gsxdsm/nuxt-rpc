@@ -189,7 +189,7 @@ Wouldn't it be nice if all of that was automatically handled and all you'd need 
 
 This module builds upon the great work of [nuxt-remote-fn](https://github.com/wobsoriano/nuxt-remote-fn) and adds support for Nuxt 4 as well as organizing remote functions under server/rpc instead of looking for .server. in the filename (which can cause issues with server plugins and components). In addition, files can be nested under subdirectories of server/rpc, which will be added to the function signature - this can be useful for adding middleware checks. Ex:
 
-```
+```ts
 ./server/rpc/public/todos
 
 export function getTodos(){
@@ -198,7 +198,7 @@ export function getTodos(){
 
 ```
 
-Would be addressable by public_todos.getTodos(). Middleware can check for the path prefix to perform auth and other functions.
+Would be addressable by `public_todos.getTodos()`. Middleware can check for the path prefix to perform auth and other functions.
 
 ## Development
 
