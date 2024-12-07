@@ -3,7 +3,7 @@ import { init, parse } from 'es-module-lexer'
 import * as path from 'pathe'
 
 export function getModuleId (file: string) {
-  const lastPath = file.split("/rpc/")[1].replaceAll(path.sep, "_");
+  const lastPath = file.split("/server/rpc/")[1].replaceAll(path.sep, "_");
   const base = path.basename(lastPath, path.extname(lastPath));
   const id = base;
   const validId = id.replaceAll(/[^\p{L}\p{N}_$]/gu, "_").replace(/^\d/, "_$&");
