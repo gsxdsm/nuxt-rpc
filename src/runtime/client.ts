@@ -1,3 +1,4 @@
+import { useRequestFetch } from '#app'
 interface Options {
   fetchOptions: Parameters<typeof globalThis.$fetch>[1]
 }
@@ -12,7 +13,7 @@ export function createClient<T>(options?: Options) {
         return generateAPI(`${url}/${path}`)
       },
       apply({ url }, _thisArg, args) {
-        return globalThis.$fetch(url, {
+        return useRequestFetch()(url, {
           ...options?.fetchOptions,
           method: 'POST',
           body: {
