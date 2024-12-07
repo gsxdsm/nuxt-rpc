@@ -1,4 +1,4 @@
-import { relative, resolve } from 'node:path'
+import { relative, resolve } from 'node:path';
 import {
   addImports,
   addServerHandler,
@@ -6,18 +6,18 @@ import {
   addVitePlugin,
   createResolver,
   defineNuxtModule,
-} from '@nuxt/kit'
-import fg from 'fast-glob'
-import defu from 'defu'
-import dedent from 'dedent'
-import { createFilter } from '@rollup/pluginutils'
-import { getModuleId, transformServerFiles } from './runtime/transformer'
+} from '@nuxt/kit';
+import fg from 'fast-glob';
+import defu from 'defu';
+import dedent from 'dedent';
+import { createFilter } from '@rollup/pluginutils';
+import { getModuleId, transformServerFiles } from './runtime/transformer';
 
 export interface ModuleOptions {
-  pattern?: string | string[]
-  apiRoute?: string
-  rpcClientShortname?: string
-  rpcClientName?: string
+  pattern?: string | string[];
+  apiRoute?: string;
+  rpcClientShortname?: string;
+  rpcClientName?: string;
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -36,39 +36,39 @@ export default defineNuxtModule<ModuleOptions>({
     nuxt.options.runtimeConfig.rpc = defu(
       nuxt.options.runtimeConfig.rpc,
       options
-    )
-    const files: string[] = []
+    );
+    const files: string[] = [];
 
-    const filter = createFilter(options.pattern)
+    const filter = createFilter(options.pattern);
 
     // Transpile runtime and handler
-    const resolver = createResolver(import.meta.url)
-    const handlerPath = resolver.resolve(nuxt.options.buildDir, 'rpc-handler')
-    const runtimeDir = resolver.resolve('./runtime')
-    nuxt.options.build.transpile.push(runtimeDir, handlerPath)
-    nuxt.options.vite ??= {}
-    nuxt.options.vite.optimizeDeps ??= {}
-    nuxt.options.vite.optimizeDeps.exclude ??= []
-    nuxt.options.vite.optimizeDeps.exclude.push('nuxt-rpc')
+    const resolver = createResolver(import.meta.url);
+    const handlerPath = resolver.resolve(nuxt.options.buildDir, 'rpc-handler');
+    const runtimeDir = resolver.resolve('./runtime');
+    nuxt.options.build.transpile.push(runtimeDir, handlerPath);
+    nuxt.options.vite ??= {};
+    nuxt.options.vite.optimizeDeps ??= {};
+    nuxt.options.vite.optimizeDeps.exclude ??= [];
+    nuxt.options.vite.optimizeDeps.exclude.push('nuxt-rpc');
     nuxt.hook('builder:watch', async (e, path) => {
       path = relative(
         nuxt.options.rootDir,
         resolve(nuxt.options.rootDir, path)
-      )
-      if (e === 'change') return
+      );
+      if (e === 'change') return;
       if (filter(path)) {
-        await scanRemoteFunctions()
-        await nuxt.callHook('builder:generateApp')
+        await scanRemoteFunctions();
+        await nuxt.callHook('builder:generateApp');
       }
-    })
+    });
 
     addServerHandler({
       route: options.apiRoute + '/:moduleId/:functionName',
       method: 'post',
       handler: handlerPath,
-    })
+    });
 
-    addVitePlugin(transformServerFiles({ filter }))
+    addVitePlugin(transformServerFiles({ filter }));
 
     addImports([
       {
@@ -76,9 +76,9 @@ export default defineNuxtModule<ModuleOptions>({
         as: 'createClient',
         from: resolver.resolve(runtimeDir, 'client'),
       },
-    ])
+    ]);
 
-    await scanRemoteFunctions()
+    await scanRemoteFunctions();
 
     addTemplate({
       filename: 'rpc-handler.ts',
@@ -87,11 +87,11 @@ export default defineNuxtModule<ModuleOptions>({
         const filesWithId = files.map((file) => ({
           file: file.replace(/\.ts$/, ''),
           id: getModuleId(file),
-        }))
+        }));
         return dedent`
           import { createRpcHandler } from ${JSON.stringify(
-          resolver.resolve(runtimeDir, 'server')
-        )}
+            resolver.resolve(runtimeDir, 'server')
+          )}
           ${filesWithId
             .map((i) => `import * as ${i.id} from ${JSON.stringify(i.file)}`)
             .join('\n')}
@@ -104,9 +104,9 @@ export default defineNuxtModule<ModuleOptions>({
             ${filesWithId.map((i) => i.id).join(',\n')}
           })
 
-        `
+        `;
       },
-    })
+    });
 
     addTemplate({
       filename: 'rpc-client.ts',
@@ -129,31 +129,31 @@ export default defineNuxtModule<ModuleOptions>({
                 ...options,
               },
             })
-        `
+        `;
       },
-    })
+    });
 
     addImports([
+      {
+        name: options.rpcClientShortname!,
+        from: resolver.resolve(nuxt.options.buildDir, 'rpc-client'),
+      },
       {
         name: options.rpcClientName!,
         from: resolver.resolve(nuxt.options.buildDir, 'rpc-client'),
       },
-      {
-        name: `${options.rpcClientName}Client`,
-        from: resolver.resolve(nuxt.options.buildDir, 'rpc-client'),
-      },
-    ])
+    ]);
 
     async function scanRemoteFunctions() {
-      files.length = 0
+      files.length = 0;
       const updatedFiles = await fg(options.pattern!, {
         cwd: nuxt.options.rootDir,
         absolute: true,
         onlyFiles: true,
         ignore: ['!**/node_modules', '!**/dist'],
-      })
-      files.push(...new Set(updatedFiles))
-      return files
+      });
+      files.push(...new Set(updatedFiles));
+      return files;
     }
   },
-})
+});
