@@ -37,9 +37,7 @@ Directly use any SQL/ORM query to retrieve & mutate data on client.
 
 ```vue
 <script setup lang="ts">
-import { getTodos } from '@/server/rpc/todo'
-
-const todos = await getTodos()
+const todos = await rpc.todo.getTodos()
 </script>
 
 <template>
@@ -51,23 +49,21 @@ The `server/rpc` part of the path informs the module that this code should never
 
 Checkout [the playground example](/playground).
 
-## RPC Util
-You can create a RPC until/shortcut:
-
-```typescript
-import type { RemoteFunction } from "#build/rpc-handler";
-import { createClient } from "nuxt-rpc/client";
-
-export const rpc = createClient<RemoteFunction>();
-```
-
-You can then use this in your view:
+## Custom fetch options
+You can modify fetch options (add headers, etc) with the rpcClient
 
 ```vue
 index.vue
 
 <script setup lang="ts">
-const { post } = await rpc.posts.getPost(1);
+const postsClient = rpcClient({
+  fetchOptions:{
+    headers:{
+      "Authorization": "Bearer token"
+    }
+  }
+}).posts;
+const post = postsClient.getPost(1);
 </script>
 
 <template>
@@ -77,6 +73,18 @@ const { post } = await rpc.posts.getPost(1);
   </div>
 </template>
 
+```
+
+All capabilities of `$fetch` are availabile, including callbacks:
+
+```ts
+const client = rpcClient({
+  fetchOptions: {
+    onRequest({ request }) {
+      // do something
+    }
+  }
+})
 ```
 
 ## H3 Event
@@ -156,8 +164,7 @@ export async function addTodo(todo: Todo) {
 
 ```vue
 <script setup lang="ts">
-import { getTodos } from '@/server/rpc/todo'
-
+const { getTodos } = rpc.todo;
 const { data: todos } = useAsyncData('todos', () => getTodos())
 </script>
 ```

@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { useAsyncData } from '#app'
-import { rpcClient } from '#build/rpc-client';
 
 const { data: todos, refresh } = await useAsyncData('todos', () => rpc.todo.getTodos())
 const todoClient = rpcClient({
   fetchOptions:{
     headers:{
       "Authorization": "Bearer token"
+    },
+    onRequest() {
+      console.log('request')
     }
   }
 }).todo;
