@@ -16,7 +16,7 @@ export default defineNuxtModule<ModuleOptions>({
     version: '^3.3.0'
   },
   defaults: {
-    pattern: '**/rpc/**/*.{ts,js,mjs}'
+    pattern: '**/server/rpc/**/*.{ts,js,mjs}'
   },
   async setup (options, nuxt) {
     const files: string[] = []
@@ -28,7 +28,10 @@ export default defineNuxtModule<ModuleOptions>({
     const handlerPath = resolver.resolve(nuxt.options.buildDir, 'rpc-handler')
     const runtimeDir = resolver.resolve('./runtime')
     nuxt.options.build.transpile.push(runtimeDir, handlerPath)
-
+    nuxt.options.vite ??= {};
+    nuxt.options.vite.optimizeDeps ??= {};
+    nuxt.options.vite.optimizeDeps.exclude ??= [];
+    nuxt.options.vite.optimizeDeps.exclude.push("nuxt-rpc");
     nuxt.hook('builder:watch', async (e, path) => {
       path = relative(nuxt.options.rootDir, resolve(nuxt.options.rootDir, path))
       if (e === 'change') return
