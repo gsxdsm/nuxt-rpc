@@ -113,21 +113,22 @@ export default defineNuxtModule<ModuleOptions>({
       write: true,
       getContents() {
         return dedent`
-          import type { RemoteFunction } from "#build/rpc-handler";
-          import { createClient } from "nuxt-rpc/client";
+          import type { RemoteFunction } from '#build/rpc-handler'
+          import { createClient } from 'nuxt-rpc/client'
 
-          export const ${options.rpcClientName}: RemoteFunction = createClient<RemoteFunction>({
+          export const ${options.rpcClientShortname}: RemoteFunction = createClient<RemoteFunction>({
             apiRoute: '${options.apiRoute}',
             fetchOptions: {},
-          });
-          export const ${options.rpcClientName}Client = (
+          })
+
+          export const ${options.rpcClientName} = (
             options?: Parameters<typeof globalThis.$fetch>[1]): RemoteFunction =>
             createClient<RemoteFunction>({
               apiRoute: '${options.apiRoute}',
               fetchOptions: {
                 ...options,
               },
-            });
+            })
         `
       },
     })
