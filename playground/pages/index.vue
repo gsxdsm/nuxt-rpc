@@ -1,16 +1,23 @@
 <script setup lang="ts">
 import { useAsyncData } from '#app'
-import { deleteTodo, toggleTodo, getTodos } from '~/server/rpc/todo'
+import { rpcClient } from '#build/rpc-client';
 
-const { data: todos, refresh } = await useAsyncData('todos', () => getTodos())
+const { data: todos, refresh } = await useAsyncData('todos', () => rpc.todo.getTodos())
+const todoClient = rpcClient({
+  fetchOptions:{
+    headers:{
+      "Authorization": "Bearer token"
+    }
+  }
+}).todo;
 
 async function handleChange (id: number) {
-  await toggleTodo(id)
+  await rpc.todo.toggleTodo(id)
   await refresh()
 }
 
 async function handleDelete (id: number) {
-  await deleteTodo(id)
+  await todoClient.deleteTodo(id)
   await refresh()
 }
 </script>

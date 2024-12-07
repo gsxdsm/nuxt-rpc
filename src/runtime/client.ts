@@ -1,11 +1,11 @@
-// @ts-expect-error nuxt
 import { useRequestFetch } from '#app'
-interface Options {
+export interface RpcClientOptions {
   fetchOptions: Parameters<typeof globalThis.$fetch>[1]
+  apiRoute?: string
 }
 
-export function createClient<T>(options?: Options) {
-  function generateAPI(baseUrl = '/api/__rpc'): T {
+export function createClient<T>(options?: RpcClientOptions) {
+  function generateAPI(baseUrl = options?.apiRoute || '/api/__rpc'): T {
     const noop = () => {}
     noop.url = baseUrl
 

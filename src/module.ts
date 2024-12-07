@@ -1,12 +1,15 @@
 import { relative, resolve } from 'node:path'
 import { addImports, addServerHandler, addTemplate, addVitePlugin, createResolver, defineNuxtModule } from '@nuxt/kit'
 import fg from 'fast-glob'
+import defu from 'defu';
 import dedent from 'dedent'
 import { createFilter } from '@rollup/pluginutils'
 import { getModuleId, transformServerFiles } from './runtime/transformer'
 
 export interface ModuleOptions {
-  pattern?: string | string[]
+  pattern?: string | string[],
+  apiRoute?: string,
+  rpcClientName?: string
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -16,9 +19,15 @@ export default defineNuxtModule<ModuleOptions>({
     version: '^3.3.0'
   },
   defaults: {
-    pattern: '**/server/rpc/**/*.{ts,js,mjs}'
+    pattern: '**/server/rpc/**/*.{ts,js,mjs}',
+    apiRoute: '/api/__rpc',
+    rpcClientName: 'rpc'
   },
   async setup (options, nuxt) {
+    nuxt.options.runtimeConfig.rpc = defu(
+      nuxt.options.runtimeConfig.rpc,
+      options
+    );
     const files: string[] = []
 
     const filter = createFilter(options.pattern)
@@ -42,7 +51,7 @@ export default defineNuxtModule<ModuleOptions>({
     })
 
     addServerHandler({
-      route: '/api/__rpc/:moduleId/:functionName',
+      route: options.apiRoute + '/:moduleId/:functionName',
       method: 'post',
       handler: handlerPath
     })
@@ -54,7 +63,7 @@ export default defineNuxtModule<ModuleOptions>({
         name: 'createClient',
         as: 'createClient',
         from: resolver.resolve(runtimeDir, 'client')
-      },
+      }
     ])
 
     await scanRemoteFunctions()
@@ -78,9 +87,38 @@ export default defineNuxtModule<ModuleOptions>({
           export default createRpcHandler({
             ${filesWithId.map(i => i.id).join(',\n')}
           })
+
         `
       }
     })
+
+    addTemplate({
+      filename: 'rpc-client.ts',
+      write: true,
+      getContents () {
+
+        return dedent`
+          import type { RemoteFunction } from "#build/rpc-handler";
+          import type { RpcClientOptions } from "nuxt-rpc/client";
+          import { createClient } from "nuxt-rpc/client";
+
+          export const ${options.rpcClientName}: RemoteFunction = createClient<RemoteFunction>();
+          export const ${options.rpcClientName}Client = (options?: RpcClientOptions): RemoteFunction => createClient<RemoteFunction>(options);
+        `
+      }
+    })
+
+    addImports([
+      {
+        name: options.rpcClientName!,
+        from: resolver.resolve(nuxt.options.buildDir, 'rpc-client')
+      },
+      {
+        name: `${options.rpcClientName}Client`,
+        from: resolver.resolve(nuxt.options.buildDir, 'rpc-client')
+      }
+    ])
+
 
     async function scanRemoteFunctions () {
       files.length = 0
