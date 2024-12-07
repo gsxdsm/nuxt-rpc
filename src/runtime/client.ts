@@ -1,3 +1,4 @@
+// @ts-expect-error nuxt
 import { useRequestFetch } from '#app'
 interface Options {
   fetchOptions: Parameters<typeof globalThis.$fetch>[1]
