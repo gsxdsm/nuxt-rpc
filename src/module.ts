@@ -16,8 +16,10 @@ import { getModuleId, transformServerFiles } from './runtime/transformer';
 export interface ModuleOptions {
   pattern?: string | string[];
   apiRoute?: string;
-  rpcClientShortname?: string;
   rpcClientName?: string;
+  rpcCachedClientName?: string;
+  rpcCachelessClientName?: string;
+  cacheDefault?: boolean;
 }
 
 export default defineNuxtModule<ModuleOptions>({
@@ -29,8 +31,10 @@ export default defineNuxtModule<ModuleOptions>({
   defaults: {
     pattern: '**/server/rpc/**/*.{ts,js,mjs}',
     apiRoute: '/api/__rpc',
-    rpcClientShortname: 'rpc',
-    rpcClientName: 'rpcClient',
+    rpcClientName: 'rpc',
+    rpcCachedClientName: 'rpcCached',
+    rpcCachelessClientName: 'rpcCacheless',
+    cacheDefault: false,
   },
   async setup(options, nuxt) {
     nuxt.options.runtimeConfig.rpc = defu(
@@ -113,33 +117,59 @@ export default defineNuxtModule<ModuleOptions>({
       write: true,
       getContents() {
         return dedent`
-          import type { RemoteFunction } from '#build/rpc-handler'
-          import { createClient } from 'nuxt-rpc/client'
+          import type { RemoteFunction } from '#build/rpc-handler';
+          import { createClient, type RpcClientOptions } from 'nuxt-rpc/client';
+          import defu from 'defu';
 
-          export const ${options.rpcClientShortname}: RemoteFunction = createClient<RemoteFunction>({
-            apiRoute: '${options.apiRoute}',
-            fetchOptions: {},
-          })
-
+          // Client with default cache setting
           export const ${options.rpcClientName} = (
-            options?: Parameters<typeof globalThis.$fetch>[1]): RemoteFunction =>
-            createClient<RemoteFunction>({
-              apiRoute: '${options.apiRoute}',
-              fetchOptions: {
-                ...options,
-              },
-            })
+            options?: RpcClientOptions): RemoteFunction => {
+              return createClient<RemoteFunction>(
+                defu(options, {
+                  apiRoute: '${options.apiRoute}',
+                  cache: ${options.cacheDefault},
+                })
+              );
+            }; 
+
+            // Client with cache disabled
+            export const ${options.rpcCachelessClientName} = (
+              options?: RpcClientOptions): RemoteFunction => {
+                return createClient<RemoteFunction>(
+                  defu(options, {
+                    apiRoute: '${options.apiRoute}',
+                    cache: false,
+                  })
+                );
+              }; 
+
+              // Client with cache enabled
+              export const ${options.rpcCachedClientName} = (
+                options?: RpcClientOptions): RemoteFunction => {
+                  return createClient<RemoteFunction>(
+                    defu(options, {
+                      apiRoute: '${options.apiRoute}',
+                      cache: true,
+                    })
+                  );
+                };
+
+                  
         `;
       },
     });
 
     addImports([
       {
-        name: options.rpcClientShortname!,
+        name: options.rpcClientName!,
         from: resolver.resolve(nuxt.options.buildDir, 'rpc-client'),
       },
       {
-        name: options.rpcClientName!,
+        name: options.rpcCachedClientName!,
+        from: resolver.resolve(nuxt.options.buildDir, 'rpc-client'),
+      },
+      {
+        name: options.rpcCachelessClientName!,
         from: resolver.resolve(nuxt.options.buildDir, 'rpc-client'),
       },
     ]);

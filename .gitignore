@@ -57,3 +57,4 @@ Temporary Items
 .apdisk
 
 *.db
+.vscode/launch.json

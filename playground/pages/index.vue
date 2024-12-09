@@ -2,19 +2,22 @@
 import { useAsyncData } from '#app';
 
 const { data: todos, refresh } = await useAsyncData('todos', () =>
-  rpc.todo.getTodos()
+  rpc().todo.getTodos()
 );
-const todoClient = rpcClient({
-  headers: {
-    Authorization: 'Bearer token',
-  },
-  onRequest() {
-    console.log('request');
+const todoClient = rpc({
+  cache: false,
+  fetchOptions: {
+    headers: {
+      Authorization: 'Bearer token',
+    },
+    onRequest() {
+      console.log('request');
+    },
   },
 }).todo;
 
 async function handleChange(id: number) {
-  await rpc.todo.toggleTodo(id);
+  await rpc().todo.toggleTodo(id);
   await refresh();
 }
 
