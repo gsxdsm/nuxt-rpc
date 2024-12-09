@@ -230,7 +230,7 @@ const { data: todos } = useAsyncData('todos', () => getTodos());
 
 Sharing data from server to client involves a lot of ceremony. i.e. an `eventHandler` needs to be set up and `useFetch` needs to be used in the browser.
 
-Wouldn't it be nice if all of that was automatically handled and all you'd need to do is import `getTodos` on the client, just like you do in `eventHandler`'s? That's where `nuxt-rpc` comes in. With `nuxt-rpc`, all exported functions from `server/rpc.` files automatically become available to the browser as well.
+Wouldn't it be nice if all of that was automatically handled and all you'd need to do is import `getTodos` on the client, just like you do in `eventHandler`'s? That's where `nuxt-rpc` comes in. With `nuxt-rpc`, all exported functions from `server/rpc` files automatically become available to the browser as well.
 
 This module builds upon the great work of [nuxt-remote-fn](https://github.com/wobsoriano/nuxt-remote-fn) and adds support for Nuxt 4 as well as organizing remote functions under server/rpc instead of looking for .server. in the filename (which can cause issues with server plugins and components).
 
