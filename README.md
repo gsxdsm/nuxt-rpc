@@ -135,8 +135,8 @@ The following config settings (and their defaults) are available:
 
 ```ts
   rpc: {
-    apiRoute: '/api/__rpc', //route to use for incoming calls.
-    paths: ['/server/rpc/', '/server/functions/'] //paths to search for functions
+    apiRoute: '/api/__rpc', //route to use for incoming calls
+    paths: ['/server/rpc/', '/server/functions/'], //paths to search for functions
     cacheDefault: false, //If the default rpc() client caches calls
     rpcClientName: 'rpc', //Name of the default client (auto imported)
     rpcCachedClientName: 'rpcCached', //Version of the default client with caching enabled (auto imported)
