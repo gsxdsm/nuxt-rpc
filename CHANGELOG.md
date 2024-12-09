@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.6
+
+[compare changes](https://github.com/gsxdsm/nuxt-rpc/compare/v0.2.5...v0.2.6)
+
 ## v0.2.5
 
 Added support for multiple directory search patterns and the ability to use an index.ts file inside a directory

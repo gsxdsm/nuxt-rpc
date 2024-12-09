@@ -1,6 +1,6 @@
 {
   "name": "nuxt-rpc",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "packageManager": "pnpm@8.15.9",
   "description": "Remote Functions. Instead of Event Handlers.",
   "keywords": [
@@ -78,5 +78,18 @@
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "vitest": "^1.6.0"
+  },
+  "eslintConfig": {
+    "root": true,
+    "ignorePatterns": [
+      "**/dist/**",
+      "**/.output/**",
+      "**/.nuxt/**",
+      "**/node_modules/**",
+      "**/.history/**"
+    ],
+    "extends": [
+      "@nuxt/eslint-config"
+    ]
   }
 }
