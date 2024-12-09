@@ -1,5 +1,5 @@
 import { hash as ohash } from 'ohash';
-import { useRequestFetch } from '#app';
+import { useRequestFetch, useNuxtApp } from '#app';
 
 export interface RpcClientOptions {
   fetchOptions?: Parameters<typeof globalThis.$fetch>[1];
