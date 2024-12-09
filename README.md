@@ -16,7 +16,7 @@ export default defineNuxtConfig({
 
 ## Usage
 
-Export your remote functions in `server/rpc/**/*.{ts,js,mjs}` files:
+Export your remote functions in `server/rpc/**/*.{ts,js,mjs}` (configrable) files:
 
 ```ts
 // server/rpc/todo.ts
@@ -43,9 +43,37 @@ const todos = await rpc().todo.getTodos();
 </template>
 ```
 
-The `server/rpc` part of the path informs the module that this code should never end up in the browser and to convert it to an API call instead (`POST /api/__rpc/todo/getTodos`).
+The `server/rpc` part of the path informs the module that this code should never end up in the browser and to convert it to an API call instead (`POST /api/__rpc/todo/getTodos`). You can adjust the search path using the `paths` configuration value (and add multiple search paths).
 
 Checkout [the playground example](/playground).
+
+## Directories
+
+Files can be nested under subdirectories of server/rpc, which will be added to the function signature - this can be useful for adding middleware checks. Ex:
+
+```ts
+./server/rpc/public/todos.ts
+
+export function getTodos(){
+  ...
+}
+
+```
+
+Would be addressable by `public_todos.getTodos()`. Middleware can check for the path prefix to perform auth and other functions.
+
+You can also create an `index.ts` file in a sub directory under rpc to use the directory name as the rpc name.
+
+```ts
+./server/rpc/public/todos/index.ts
+
+export function getTodos(){
+  ...
+}
+
+```
+
+The example above would be addressible from `public_todos.getTodos()`
 
 ## Custom client options
 
@@ -108,6 +136,7 @@ The following config settings (and their defaults) are available:
 ```ts
   rpc: {
     apiRoute: '/api/__rpc', //route to use for incoming calls.
+    paths: ['/server/rpc/', '/server/functions/'] //paths to search for functions
     cacheDefault: false, //If the default rpc() client caches calls
     rpcClientName: 'rpc', //Name of the default client (auto imported)
     rpcCachedClientName: 'rpcCached', //Version of the default client with caching enabled (auto imported)
@@ -203,18 +232,7 @@ Sharing data from server to client involves a lot of ceremony. i.e. an `eventHan
 
 Wouldn't it be nice if all of that was automatically handled and all you'd need to do is import `getTodos` on the client, just like you do in `eventHandler`'s? That's where `nuxt-rpc` comes in. With `nuxt-rpc`, all exported functions from `server/rpc.` files automatically become available to the browser as well.
 
-This module builds upon the great work of [nuxt-remote-fn](https://github.com/wobsoriano/nuxt-remote-fn) and adds support for Nuxt 4 as well as organizing remote functions under server/rpc instead of looking for .server. in the filename (which can cause issues with server plugins and components). In addition, files can be nested under subdirectories of server/rpc, which will be added to the function signature - this can be useful for adding middleware checks. Ex:
-
-```ts
-./server/rpc/public/todos
-
-export function getTodos(){
-  ...
-}
-
-```
-
-Would be addressable by `public_todos.getTodos()`. Middleware can check for the path prefix to perform auth and other functions.
+This module builds upon the great work of [nuxt-remote-fn](https://github.com/wobsoriano/nuxt-remote-fn) and adds support for Nuxt 4 as well as organizing remote functions under server/rpc instead of looking for .server. in the filename (which can cause issues with server plugins and components).
 
 ## Development
 

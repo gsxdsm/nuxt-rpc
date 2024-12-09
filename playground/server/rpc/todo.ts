@@ -1,42 +1,48 @@
-import { useH3Event } from "../../../src/runtime/server";
-import { prisma } from "~/lib/prisma";
+import { useH3Event } from '../../../src/runtime/server';
+import { prisma } from '~/lib/prisma';
 
-export async function getTodos () {
-  const todos = await prisma.todo.findMany()
-  return todos
+export async function getTodos() {
+  const todos = await prisma.todo.findMany();
+  return todos;
 }
 
-export function getTodo (id: number) {
+export function getTodo(id: number) {
   return prisma.todo.findFirstOrThrow({
     where: {
-      id
-    }
-  })
+      id,
+    },
+  });
 }
 
-export async function toggleTodo (id: number) {
-  const todo = await getTodo(id)
+export async function toggleTodo(id: number) {
+  const todo = await getTodo(id);
   return prisma.todo.update({
     where: { id },
-    data: { completed: !todo.completed }
-  })
+    data: { completed: !todo.completed },
+  });
 }
 
-export function deleteTodo (id: number) {
-  return prisma.todo.delete({ where: { id } })
+export function deleteTodo(id: number) {
+  return prisma.todo.delete({ where: { id } });
 }
 
-export function addTodo ({ title, content }: { title: string; content: string }) {
+export function addTodo({
+  title,
+  content,
+}: {
+  title: string;
+  content: string;
+}) {
   return prisma.todo.create({
     data: {
       title,
       content,
-      completed: false
-    }
-  })
+      completed: false,
+    },
+  });
 }
 
 export function createContext() {
-  const event = useH3Event()
+  const event = useH3Event();
   // console.log('event.context.params', event.context.params)
 }

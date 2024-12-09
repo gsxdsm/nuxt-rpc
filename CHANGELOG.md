@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.2.5
+
+Added support for multiple directory search patterns and the ability to use an index.ts file inside a directory
+
 ## v0.2.1
 
 Bugfix for error loading during SSR

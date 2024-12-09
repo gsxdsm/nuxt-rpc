@@ -10,11 +10,12 @@ import {
 import fg from 'fast-glob';
 import defu from 'defu';
 import dedent from 'dedent';
+import * as pathe from 'pathe';
 import { createFilter } from '@rollup/pluginutils';
 import { getModuleId, transformServerFiles } from './runtime/transformer';
-
+let patterns: string[];
 export interface ModuleOptions {
-  pattern?: string | string[];
+  paths?: string | string[];
   apiRoute?: string;
   rpcClientName?: string;
   rpcCachedClientName?: string;
@@ -29,7 +30,7 @@ export default defineNuxtModule<ModuleOptions>({
     version: '^3.3.0',
   },
   defaults: {
-    pattern: '**/server/rpc/**/*.{ts,js,mjs}',
+    paths: '/server/rpc/',
     apiRoute: '/api/__rpc',
     rpcClientName: 'rpc',
     rpcCachedClientName: 'rpcCached',
@@ -43,7 +44,21 @@ export default defineNuxtModule<ModuleOptions>({
     );
     const files: string[] = [];
 
-    const filter = createFilter(options.pattern);
+    const paths = Array.isArray(options.paths)
+      ? options.paths
+      : [options.paths];
+
+    patterns = paths.map((path) => {
+      if (!path?.endsWith(pathe.sep)) {
+        path = path + pathe.sep;
+      }
+      if (!path.startsWith(pathe.sep)) {
+        path = pathe.sep + path;
+      }
+      return `**${path}**/*.{ts,js,mjs}`;
+    });
+
+    const filter = createFilter(patterns);
 
     // Transpile runtime and handler
     const resolver = createResolver(import.meta.url);
@@ -72,7 +87,7 @@ export default defineNuxtModule<ModuleOptions>({
       handler: handlerPath,
     });
 
-    addVitePlugin(transformServerFiles({ filter }));
+    addVitePlugin(transformServerFiles({ filter, paths: options.paths! }));
 
     addImports([
       {
@@ -90,7 +105,7 @@ export default defineNuxtModule<ModuleOptions>({
       getContents() {
         const filesWithId = files.map((file) => ({
           file: file.replace(/\.ts$/, ''),
-          id: getModuleId(file),
+          id: getModuleId(file, options.paths!),
         }));
         return dedent`
           import { createRpcHandler } from ${JSON.stringify(
@@ -101,11 +116,11 @@ export default defineNuxtModule<ModuleOptions>({
             .join('\n')}
 
           export type RemoteFunction = {
-            ${filesWithId.map((i) => `${i.id}: typeof ${i.id}`).join('\n')}
+            ${filesWithId.map((i) => `${i.id}: typeof ${i.id}`).join('\n    ')}
           }
 
           export default createRpcHandler({
-            ${filesWithId.map((i) => i.id).join(',\n')}
+            ${filesWithId.map((i) => i.id).join(',\n    ')}
           })
 
         `;
@@ -176,7 +191,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     async function scanRemoteFunctions() {
       files.length = 0;
-      const updatedFiles = await fg(options.pattern!, {
+      const updatedFiles = await fg(patterns!, {
         cwd: nuxt.options.rootDir,
         absolute: true,
         onlyFiles: true,

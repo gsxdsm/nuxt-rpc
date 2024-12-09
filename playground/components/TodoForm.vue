@@ -1,24 +1,24 @@
 <script setup lang="ts">
-import { ref } from '#imports'
-import { addTodo } from '~/server/rpc/todo'
+import { ref } from '#imports';
+import { addTodo } from '~/server/rpc/todo';
 
-const title = ref('')
-const content = ref('')
-const submitting = ref(false)
+const title = ref('');
+const content = ref('');
+const submitting = ref(false);
 
-const emit = defineEmits(['create'])
+const emit = defineEmits(['create']);
 
-async function handleSubmit () {
-  submitting.value = true
+async function handleSubmit() {
+  submitting.value = true;
   const todo = await addTodo({
     title: title.value,
-    content: content.value
-  })
-  console.log('added todo: ', todo)
-  submitting.value = false
-  title.value = ''
-  content.value = ''
-  emit('create')
+    content: content.value,
+  });
+  console.log('added todo: ', todo);
+  submitting.value = false;
+  title.value = '';
+  content.value = '';
+  emit('create');
 }
 </script>
 
@@ -26,22 +26,9 @@ async function handleSubmit () {
   <div>
     <h1>Add todo</h1>
     <form @submit.prevent="handleSubmit">
-      <input
-        v-model="title"
-        placeholder="Title"
-        type="text"
-      > <br>
-      <input
-        v-model="content"
-        placeholder="Content"
-        type="text"
-      > <br>
-      <button
-        type="submit"
-        :disabled="submitting"
-      >
-        Submit
-      </button>
+      <input v-model="title" placeholder="Title" type="text" /> <br />
+      <input v-model="content" placeholder="Content" type="text" /> <br />
+      <button type="submit" :disabled="submitting">Submit</button>
     </form>
   </div>
 </template>
