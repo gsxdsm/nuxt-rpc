@@ -1,6 +1,6 @@
 {
   "name": "nuxt-rpc",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "packageManager": "pnpm@8.15.9",
   "description": "Remote Functions. Instead of Event Handlers.",
   "keywords": [
