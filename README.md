@@ -16,7 +16,7 @@ export default defineNuxtConfig({
 
 ## Usage
 
-Export your remote functions in `server/rpc/**/*.{ts,js,mjs}` (configrable) files:
+Export your remote functions in `server/rpc/**/*.{ts,js,mjs}` (configurable) files:
 
 ```ts
 // server/rpc/todo.ts
