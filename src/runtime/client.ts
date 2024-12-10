@@ -25,7 +25,7 @@ export function createClient<T>(options?: RpcClientOptions) {
         const payloadCache: Record<string, any> = (nuxt.payload.functions =
           nuxt.payload.functions || {});
 
-        const state = (nuxt.__server_fn__ || {}) as InternalState<T>;
+        const state = (nuxt.__rpc || {}) as InternalState<T>;
         const promiseMap: InternalState<T>['promiseMap'] = (state.promiseMap =
           state.promiseMap || new Map());
         if (cache) {
