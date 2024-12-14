@@ -1,7 +1,7 @@
 export function hello({ name }: { name: string }) {
-  return Promise.resolve({ message: `Hello ${name}` });
+  return { message: `Hello ${name}` };
 }
 
 export function getTime(name: string) {
-  return Promise.resolve({ time: Date.now() });
+  return new Date().toISOString() + Math.random();
 }

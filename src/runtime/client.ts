@@ -5,12 +5,24 @@ export interface RpcClientOptions {
   fetchOptions?: Parameters<typeof globalThis.$fetch>[1];
   apiRoute?: string;
   cache?: boolean;
+  retry?: number;
 }
 interface InternalState<T> {
   promiseMap: Map<string, Promise<T>>;
 }
 
 export function createClient<T>(options?: RpcClientOptions) {
+  async function fetchWithRetry(url: string, fetchOptions: any) {
+    const retries = options?.retry || 0;
+    for (let i = 0; i <= retries; i++) {
+      try {
+        return await useRequestFetch()(url, fetchOptions);
+      } catch (error) {
+        if (i === retries) throw error;
+      }
+    }
+  }
+
   function generateAPI(baseUrl = options?.apiRoute || '/api/__rpc'): T {
     const noop = () => {};
     noop.url = baseUrl;
@@ -21,14 +33,15 @@ export function createClient<T>(options?: RpcClientOptions) {
       },
       apply({ url }, _thisArg, args) {
         const { cache = false } = options || {};
-        const nuxt = useNuxtApp();
-        const payloadCache: Record<string, any> = (nuxt.payload.functions =
-          nuxt.payload.functions || {});
 
-        const state = (nuxt.__rpc || {}) as InternalState<T>;
-        const promiseMap: InternalState<T>['promiseMap'] = (state.promiseMap =
-          state.promiseMap || new Map());
         if (cache) {
+          const nuxt = useNuxtApp();
+          const payloadCache: Record<string, any> = (nuxt.payload.functions =
+            nuxt.payload.functions || {});
+
+          const state = (nuxt.__rpc__ || {}) as InternalState<T>;
+          const promiseMap: InternalState<T>['promiseMap'] = (state.promiseMap =
+            state.promiseMap || new Map());
           const body = { url, args };
           const key = args.length === 0 ? url : `${url}-${ohash(args)}`;
 
@@ -49,13 +62,40 @@ export function createClient<T>(options?: RpcClientOptions) {
 
           return request;
         }
-        return useRequestFetch()(url, {
+
+        const fetchOptions = {
           ...options?.fetchOptions,
           method: 'POST',
-          body: {
-            args,
-          },
-        });
+        };
+
+        if (
+          args.length > 0 &&
+          args.some(
+            (arg) =>
+              arg instanceof FormData ||
+              arg instanceof File ||
+              arg instanceof Blob
+          )
+        ) {
+          const formData = new FormData();
+          formData.append('__rpc_encoded', 'true');
+          args.forEach((arg, index) => {
+            if (arg instanceof FormData) {
+              // Handle nested formdata
+              // add each entry in the formdata to the main formdata
+              for (const [key, value] of arg.entries()) {
+                formData.append(`_formdata_${index}_${key}`, value);
+              }
+            } else {
+              formData.append(`_arg_${index}`, arg);
+            }
+          });
+          fetchOptions.body = formData;
+          return fetchWithRetry(url, fetchOptions);
+        }
+
+        fetchOptions.body = { args };
+        return fetchWithRetry(url, fetchOptions);
       },
     }) as unknown as T;
   }

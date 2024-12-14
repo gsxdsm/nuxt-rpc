@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useAsyncData } from '#app';
+import { on } from 'events';
 
 const { data: todos, refresh } = await useAsyncData('todos', () =>
   rpc().todo.getTodos()
@@ -15,6 +16,19 @@ const todoClient = rpc({
     },
   },
 }).todo;
+
+const formResult = ref({});
+const formResultOnMount = ref({});
+
+const formData = new FormData();
+formData.append('name', 'John - From SSR');
+formResult.value = await rpc().todo.testForm(formData);
+
+onMounted(async () => {
+  const formDataOnMount = new FormData();
+  formDataOnMount.append('name', 'John - From On Mount');
+  formResultOnMount.value = await rpc().todo.testForm(formDataOnMount);
+});
 
 async function handleChange(id: number) {
   await rpc().todo.toggleTodo(id);
@@ -54,6 +68,9 @@ async function handleDelete(id: number) {
     </ul>
     <hr />
     <TodoForm @create="refresh" />
+    <h2>Form Data Tests</h2>
+    <div>Form Result (SSR): {{ formResult }}</div>
+    <div>Form Result (OnMounted): {{ formResultOnMount }}</div>
   </div>
 </template>
 

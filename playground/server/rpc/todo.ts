@@ -1,5 +1,6 @@
 import { useH3Event } from '../../../src/runtime/server';
 import { prisma } from '~/lib/prisma';
+import * as fs from 'fs';
 
 export async function getTodos() {
   const todos = await prisma.todo.findMany();
@@ -40,6 +41,29 @@ export function addTodo({
       completed: false,
     },
   });
+}
+
+export function testForm(formData: FormData) {
+  const data = {};
+  if (formData) {
+    for (const [key, value] of formData.entries()) {
+      data[key] = value;
+    }
+  }
+  return data;
+}
+export async function uploadFile(name: string, formData: FormData) {
+  //write the file to disk
+  const file = formData.get('file');
+  if (file instanceof Blob) {
+    const buffer = Buffer.from(await file.arrayBuffer());
+    fs.writeFileSync(name, buffer);
+    const uuid = crypto.randomUUID();
+    const fileName = `${uuid}-${name}`;
+    const filePath = `playground/uploads/${fileName}`;
+    fs.writeFileSync(filePath, buffer);
+    return 'File uploaded: ' + filePath;
+  }
 }
 
 export function createContext() {

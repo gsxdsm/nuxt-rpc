@@ -116,11 +116,11 @@ export default defineNuxtModule<ModuleOptions>({
             .join('\n')}
 
           export type RemoteFunction = {
-            ${filesWithId.map((i) => `${i.id}: typeof ${i.id}`).join('\n    ')}
+            ${filesWithId.map((i) => `${i.id}: typeof ${i.id}`).join('\n')}
           }
 
           export default createRpcHandler({
-            ${filesWithId.map((i) => i.id).join(',\n    ')}
+            ${filesWithId.map((i) => i.id).join(',\n')}
           })
 
         `;
@@ -148,26 +148,11 @@ export default defineNuxtModule<ModuleOptions>({
             }; 
 
             // Client with cache disabled
-            export const ${options.rpcCachelessClientName} = (
-              options?: RpcClientOptions): RemoteFunction => {
-                return createClient<RemoteFunction>(
-                  defu(options, {
-                    apiRoute: '${options.apiRoute}',
-                    cache: false,
-                  })
-                );
-              }; 
+            export const ${options.rpcCachelessClientName} = ${options.rpcClientName}({ cache: false })
+            
 
-              // Client with cache enabled
-              export const ${options.rpcCachedClientName} = (
-                options?: RpcClientOptions): RemoteFunction => {
-                  return createClient<RemoteFunction>(
-                    defu(options, {
-                      apiRoute: '${options.apiRoute}',
-                      cache: true,
-                    })
-                  );
-                };
+            // Client with cache enabled
+            export const ${options.rpcCachedClientName} = ${options.rpcClientName}({ cache: true })
 
                   
         `;

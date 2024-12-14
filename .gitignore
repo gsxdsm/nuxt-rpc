@@ -23,6 +23,7 @@ dist
 .build-*
 .env
 .netlify
+playground/.nuxt/
 
 # Env
 .env
@@ -58,3 +59,4 @@ Temporary Items
 
 *.db
 .vscode/launch.json
+

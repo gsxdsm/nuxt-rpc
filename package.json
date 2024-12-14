@@ -1,6 +1,6 @@
 {
   "name": "nuxt-rpc",
-  "version": "0.2.8",
+  "version": "0.3.0",
   "packageManager": "pnpm@8.15.9",
   "description": "Remote Functions. Instead of Event Handlers.",
   "keywords": [
@@ -55,6 +55,7 @@
     "defu": "^6.1.4",
     "es-module-lexer": "^1.5.4",
     "fast-glob": "^3.3.2",
+    "formdata-node": "^6.0.3",
     "h3": "^1.13.0",
     "pathe": "^1.1.2"
   },
@@ -72,7 +73,6 @@
     "changelogen": "^0.5.7",
     "eslint": "^9.16.0",
     "nuxt": "^3.14.1592",
-    "nuxt-rpc": "workspace:*",
     "prisma": "^5.22.0",
     "taze": "^0.18.0",
     "tsx": "^4.19.2",
