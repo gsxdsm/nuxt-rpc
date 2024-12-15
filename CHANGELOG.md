@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.3.1
+
+[compare changes](https://github.com/gsxdsm/nuxt-rpc/compare/v0.2.8...v0.3.1)
+
 ## v0.2.8
 
 [compare changes](https://github.com/gsxdsm/nuxt-rpc/compare/v0.2.7...v0.2.8)
