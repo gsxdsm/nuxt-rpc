@@ -57,6 +57,7 @@
     "fast-glob": "^3.3.2",
     "formdata-node": "^6.0.3",
     "h3": "^1.13.0",
+    "nuxt-rpc": "workspace:*",
     "pathe": "^1.1.2"
   },
   "devDependencies": {

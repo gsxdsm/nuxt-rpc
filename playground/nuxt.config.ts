@@ -10,8 +10,11 @@ export default defineNuxtConfig({
     rpcCachedClientName: 'rpcCached',
     rpcCachelessClientName: 'rpcCacheless',
   },
+
   sourcemap: {
     client: true,
   },
+
   modules: [Module],
+  compatibilityDate: '2024-12-15',
 });
