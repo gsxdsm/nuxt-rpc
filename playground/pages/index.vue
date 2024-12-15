@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useAsyncData } from '#app';
-import { on } from 'events';
 
 const { data: todos, refresh } = await useAsyncData('todos', () =>
   rpc().todo.getTodos()

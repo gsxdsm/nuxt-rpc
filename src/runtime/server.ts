@@ -1,6 +1,11 @@
 import { eventHandler, createError, readBody, readFormData } from 'h3';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import type { EventHandler, EventHandlerRequest, H3Event } from 'h3';
+import {
+  RPC_ENCODED_FLAG,
+  RPC_FORMDATA_PREFIX,
+  RPC_ARG_PREFIX,
+} from './constants';
 
 const DEFAULT_CONTEXT = {} as H3Event;
 
@@ -56,24 +61,30 @@ export function createRpcHandler<
         body = await readBody(event);
       } else if (
         !contentType ||
-        contentType?.startsWith('multipart/form-data')
+        contentType.startsWith('multipart/form-data')
       ) {
-        const formData = !contentType
-          ? event.node.req.body
-          : await readFormData(event);
+        let formData: FormData;
+        if (!contentType) {
+          //@ts-ignore
+          formData = event.node.req.body;
+        } else {
+          formData = await readFormData(event);
+        }
+
         if (
-          formData.has('__rpc_encoded') &&
-          formData.get('__rpc_encoded') === 'true'
+          formData &&
+          formData.has(RPC_ENCODED_FLAG) &&
+          formData.get(RPC_ENCODED_FLAG) === 'true'
         ) {
           const args: (FormData | any)[] = [];
 
           for (const [key, value] of formData) {
-            if (key === '__rpc_encoded') continue;
-            if (key.startsWith('_arg_')) {
+            if (key === RPC_ENCODED_FLAG) continue;
+            if (key.startsWith(RPC_ARG_PREFIX)) {
               // add the arg value at the index specified by _arg_${index}
               const index = parseInt(key.split('_')[2], 10);
               args[index] = value;
-            } else if (key.startsWith('_formdata_')) {
+            } else if (key.startsWith(RPC_FORMDATA_PREFIX)) {
               const [indexStr, formKey] = key.split('_').slice(2);
               const index = parseInt(indexStr, 10);
               if (!args[index]) args[index] = new FormData();
@@ -119,10 +130,11 @@ export function createRpcHandler<
       const result = functions[moduleId][functionName].apply(event, body.args);
       return result;
     } catch (error) {
-      if (error.statusCode) throw error;
+      if (error && typeof error === 'object' && 'statusCode' in error)
+        throw error;
       throw createError({
         statusCode: 400,
-        statusMessage: error.message,
+        statusMessage: error instanceof Error ? error.message : String(error),
       });
     }
   });

@@ -1,5 +1,10 @@
 import { hash as ohash } from 'ohash';
 import { useRequestFetch, useNuxtApp } from '#app';
+import {
+  RPC_ENCODED_FLAG,
+  RPC_FORMDATA_PREFIX,
+  RPC_ARG_PREFIX,
+} from './constants';
 
 export interface RpcClientOptions {
   fetchOptions?: Parameters<typeof globalThis.$fetch>[1];
@@ -78,16 +83,16 @@ export function createClient<T>(options?: RpcClientOptions) {
           )
         ) {
           const formData = new FormData();
-          formData.append('__rpc_encoded', 'true');
+          formData.append(RPC_ENCODED_FLAG, 'true');
           args.forEach((arg, index) => {
             if (arg instanceof FormData) {
               // Handle nested formdata
               // add each entry in the formdata to the main formdata
               for (const [key, value] of arg.entries()) {
-                formData.append(`_formdata_${index}_${key}`, value);
+                formData.append(`${RPC_FORMDATA_PREFIX}${index}_${key}`, value);
               }
             } else {
-              formData.append(`_arg_${index}`, arg);
+              formData.append(`${RPC_ARG_PREFIX}${index}`, arg);
             }
           });
           fetchOptions.body = formData;

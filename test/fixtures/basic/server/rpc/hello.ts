@@ -3,5 +3,5 @@ export function hello({ name }: { name: string }) {
 }
 
 export function getTime(name: string) {
-  return new Date().toISOString() + Math.random();
+  return new Date().toISOString() + Math.random() + name;
 }

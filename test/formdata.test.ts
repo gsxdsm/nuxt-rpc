@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { fileURLToPath } from 'node:url';
 import { setup, $fetch } from '@nuxt/test-utils/e2e';
-const encode = (str: string) => str.replace(/['"]/g, (char) => `&quot;`);
+const encode = (str: string) => str.replace(/['"]/g, `&quot;`);
 
 describe('formdata e2e', async () => {
   await setup({

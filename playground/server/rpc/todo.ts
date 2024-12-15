@@ -44,7 +44,7 @@ export function addTodo({
 }
 
 export function testForm(formData: FormData) {
-  const data = {};
+  const data: Record<string, FormDataEntryValue> = {};
   if (formData) {
     for (const [key, value] of formData.entries()) {
       data[key] = value;
@@ -68,5 +68,5 @@ export async function uploadFile(name: string, formData: FormData) {
 
 export function createContext() {
   const event = useH3Event();
-  // console.log('event.context.params', event.context.params)
+  console.log('event.context.params', event.context.params);
 }
