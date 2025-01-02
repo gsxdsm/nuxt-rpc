@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.3.6
+
+[compare changes](https://github.com/gsxdsm/nuxt-rpc/compare/v0.3.6...v0.3.6)
+
+### 🏡 Chore
+
+- Update version to 0.3.5 in package.json ([34b5f68](https://github.com/gsxdsm/nuxt-rpc/commit/34b5f68))
+
+### ❤️ Contributors
+
+- Christopher Lang <eclipxe@gmail.com>
+
 ## v0.3.5 
 
 [compare changes](https://github.com/gsxdsm/nuxt-rpc/compare/v0.3.4...v0.3.6)
@@ -17,9 +29,6 @@
 
 - **release:** V0.3.2 ([1d955ed](https://github.com/gsxdsm/nuxt-rpc/commit/1d955ed))
 
-### ❤️ Contributors
-
-- Christopher Lang <eclipxe@gmail.com>
 
 ## v0.3.2
 
@@ -32,10 +41,6 @@
 ### 🏡 Chore
 
 - **release:** V0.3.1 ([8d9e432](https://github.com/gsxdsm/nuxt-rpc/commit/8d9e432))
-
-### ❤️ Contributors
-
-- Christopher Lang <eclipxe@gmail.com>
 
 ## v0.3.1
 
