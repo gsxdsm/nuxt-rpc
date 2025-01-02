@@ -1,5 +1,17 @@
 # Changelog
 
+## v0.3.4
+
+[compare changes](https://github.com/gsxdsm/nuxt-rpc/compare/v0.3.2...v0.3.4)
+
+### 🏡 Chore
+
+- **release:** V0.3.2 ([1d955ed](https://github.com/gsxdsm/nuxt-rpc/commit/1d955ed))
+
+### ❤️ Contributors
+
+- Christopher Lang <eclipxe@gmail.com>
+
 ## v0.3.2
 
 [compare changes](https://github.com/gsxdsm/nuxt-rpc/compare/v0.3.1...v0.3.2)
