@@ -8,9 +8,6 @@
 
 - Update version to 0.3.5 in package.json ([34b5f68](https://github.com/gsxdsm/nuxt-rpc/commit/34b5f68))
 
-### ❤️ Contributors
-
-- Christopher Lang <eclipxe@gmail.com>
 
 ## v0.3.5 
 
