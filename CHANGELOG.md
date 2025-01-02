@@ -1,5 +1,22 @@
 # Changelog
 
+## v0.3.6
+
+[compare changes](https://github.com/gsxdsm/nuxt-rpc/compare/v0.3.4...v0.3.6)
+
+### 🩹 Fixes
+
+- Fix self-reference in package.json leading to npm install error ([7090ca9](https://github.com/gsxdsm/nuxt-rpc/commit/7090ca9))
+
+### 🏡 Chore
+
+- **release:** V0.3.4 ([a928c70](https://github.com/gsxdsm/nuxt-rpc/commit/a928c70))
+- Bump version to 0.3.5 ([db0c6e9](https://github.com/gsxdsm/nuxt-rpc/commit/db0c6e9))
+
+### ❤️ Contributors
+
+- Christopher Lang <eclipxe@gmail.com>
+
 ## v0.3.4
 
 [compare changes](https://github.com/gsxdsm/nuxt-rpc/compare/v0.3.2...v0.3.4)
