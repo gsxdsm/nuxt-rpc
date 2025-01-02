@@ -1,5 +1,21 @@
 # Changelog
 
+## v0.3.2
+
+[compare changes](https://github.com/gsxdsm/nuxt-rpc/compare/v0.3.1...v0.3.2)
+
+### 🩹 Fixes
+
+- Cached rpc client correctly handles formdata and files now. Cached client will also properly handle retries. ([34586ab](https://github.com/gsxdsm/nuxt-rpc/commit/34586ab))
+
+### 🏡 Chore
+
+- **release:** V0.3.1 ([8d9e432](https://github.com/gsxdsm/nuxt-rpc/commit/8d9e432))
+
+### ❤️ Contributors
+
+- Christopher Lang <eclipxe@gmail.com>
+
 ## v0.3.1
 
 [compare changes](https://github.com/gsxdsm/nuxt-rpc/compare/v0.2.8...v0.3.1)
